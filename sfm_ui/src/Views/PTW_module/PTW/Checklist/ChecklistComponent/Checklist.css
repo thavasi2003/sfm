@@ -1,0 +1,71 @@
+
+.container-header-checklist{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.container-header-text-checklist{
+    font-family: system-ui;
+    color: firebrick;
+    margin: 12px 22px;
+    font-weight: 500;
+    font-size: 18px;
+    font-size: larger;
+
+}
+
+.container-header-id-checklist{
+    margin-right: 10px;
+    font-size: 18px;
+    color: gray;
+
+}
+
+.checklist-form{
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+}
+.checklist-table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+  }
+.checklist-table-header{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    display: table-header-group;
+    font-weight: bold;
+    background-color: #f4f4f4;
+}
+  
+
+  
+  .checklist-header-item {
+    display: table-cell;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .checklist-row {
+    display: table-row;
+  }
+  
+  .checklist-item-serialNo, .checklist-item-description, .checklist-item-checks {
+    display: table-cell;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .checklist-item-checks label {
+    margin-right: 10px;
+  }
+  
+  .checklist-item-remarks {
+    margin-top: 20px;
+  }
+  
+  

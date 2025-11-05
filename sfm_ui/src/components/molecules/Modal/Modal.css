@@ -1,0 +1,140 @@
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+  display: block;
+}
+
+.modal-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.modal-header {
+  padding-bottom: 10px;
+  border-bottom: 1px solid gray;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-footer {
+  border-top: 1px solid gray;
+  padding-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-header h2 {
+  color: #a0a4a8;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0;
+}
+
+.close-button {
+  background-color: #ff8861;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.close-button:hover {
+  background-color: #e06b50;
+}
+
+.modal-body {
+  margin: 20px 0;
+  color: #52575c;
+}
+
+.modal-button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+  margin: 0 5px;
+}
+
+.modal-button:hover {
+  background-color: #0056b3;
+}
+
+.modal-button.confirm {
+  background-color: #28a745;
+}
+
+.modal-button.confirm:hover {
+  background-color: #218838;
+}
+
+.modal-button.cancel {
+  background-color: #dc3545;
+}
+
+.modal-button.cancel:hover {
+  background-color: #c82333;
+}
+
+.modal-button.neutral {
+  background-color: #6c757d;
+}
+
+.modal-button.neutral:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 1024px) {
+  .modal-content {
+    width: 90%;
+  }
+
+  .modal-header h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-header h2 {
+    font-size: 16px;
+  }
+
+  .modal-body {
+    margin: 15px 0;
+  }
+}

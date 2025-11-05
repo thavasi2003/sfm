@@ -1,0 +1,103 @@
+.container-wrapper {
+  border-radius: 10px;
+}
+
+.container-header-text {
+  font-family: system-ui;
+  color: black;
+  margin: 12px 22px;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.container-body {
+  /* border-radius: 5px; */
+  border: 0.8px solid;
+  margin: 10px;
+  background-color: white;
+}
+.container-body-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 20px 20px;
+  gap: 16px;
+}
+
+.container-add-button,
+.container-flow-button {
+  border: none;
+  border-radius: 7px;
+  height: 40px;
+  width: 160px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.container-add-button {
+  background: #22d69b;
+}
+
+.container-add-button:hover {
+  background: #1bb785;
+}
+
+.container-add-button:active {
+  transform: scale(0.95);
+}
+
+.container-flow-button {
+  background: #007eff;
+}
+
+.container-flow-button:hover {
+  background: #0066cc;
+}
+
+.container-flow-button:active {
+  transform: scale(0.95);
+}
+
+.actions-icon {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.actions-icon button[name="edit"] {
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-left: 13px;
+}
+.actions-icon button[name="delete"] {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .container-wrapper {
+    padding: 10px;
+  }
+
+  .container-body {
+    padding: 15px;
+  }
+
+  .container-body-nav {
+    justify-content: space-between;
+    margin: 10px;
+  }
+
+  .container-add-button,
+  .container-flow-button {
+    width: 120px;
+    font-size: smaller;
+  }
+}

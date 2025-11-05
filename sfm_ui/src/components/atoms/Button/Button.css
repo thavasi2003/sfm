@@ -1,0 +1,137 @@
+/* Button.css */
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 400;
+  text-align: center;
+  line-height: 1.5;
+  border: none;
+  border-radius: 0.5rem;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, transform 0.3s;
+  white-space: nowrap; /* Prevents the button text from wrapping */
+}
+
+.btn-small {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-medium {
+  padding: 0.75rem 1rem;
+}
+
+.btn-large {
+  padding: 1rem 1.25rem;
+  font-size: 1.125rem;
+}
+
+.btn-icon {
+  margin-right: 0.5em;
+}
+
+/* Variants */
+.btn-primary {
+  color: #fff;
+  background-color: #007eff;
+  border-color: #007eff;
+}
+
+.btn-primary:hover {
+  background-color: #0066cc;
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary {
+  color: #fff;
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-secondary:active {
+  transform: scale(0.95);
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.btn-danger:active {
+  transform: scale(0.95);
+}
+
+.btn-success {
+  color: #fff;
+  background-color: #22d69b;
+  border-color: #22d69b;
+}
+
+.btn-success:hover {
+  background-color: #1bb785;
+}
+
+.btn-success:active {
+  transform: scale(0.95);
+}
+
+.btn-cancel {
+  color: #fff !important;
+  background-color: #ff6337 !important;
+  border-color: #ff6337 !important;
+}
+
+.btn-cancel:hover {
+  background-color: #dc3545;
+}
+
+.btn-cancel:active {
+  transform: scale(0.95);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1200px) {
+  .btn-small { padding: 0.5rem 0.7rem; }
+  .btn-medium { padding: 0.65rem 0.9rem; }
+  .btn-large { padding: 0.9rem 1.1rem; }
+}
+
+@media (max-width: 992px) {
+  .btn-small { padding: 0.5rem 0.65rem; }
+  .btn-medium { padding: 0.6rem 0.85rem; }
+  .btn-large { padding: 0.85rem 1rem; }
+}
+
+@media (max-width: 768px) {
+  .btn-small { padding: 0.45rem 0.6rem; }
+  .btn-medium { padding: 0.55rem 0.8rem; }
+  .btn-large { padding: 0.8rem 0.95rem; }
+}
+
+@media (max-width: 576px) {
+  .btn-small { padding: 0.4rem 0.55rem; }
+  .btn-medium { padding: 0.5rem 0.75rem; }
+  .btn-large { padding: 0.75rem 0.9rem; }
+}

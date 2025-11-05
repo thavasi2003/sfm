@@ -1,0 +1,33 @@
+.expanded .maincontent-container{
+  width: 82%;
+  margin-left: 18%;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+}
+.collapsed .maincontent-container{
+  width: 96%;
+  margin-left: 4%;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
+
+}
+
+@media (max-width: 1024px) {
+  .maincontent-container.expanded {
+    width: calc(100% - 10%);
+    margin-left: 10%;
+  }
+
+  .maincontent-container.collapsed {
+    width: calc(100% - 4%);
+    margin-left: 4%;
+  }
+}
+
+@media (max-width: 768px) {
+  .maincontent-container.expanded,
+  .maincontent-container.collapsed {
+    width: 100%;
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,112 @@
+
+.form-body {
+  padding: 35px 25px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group select {
+    cursor: pointer;
+    margin-top: 5px;
+    line-height: 1.5;
+    background-color: #FFF;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    transition: all .3s , border-color 0.3s, box-shadow 0.3s;
+    padding: 6px 11px;
+    font-size: 13px;
+    height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23ff8861" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  .form-group select:hover,.form-group select:focus-visible{
+    border-color: orange;
+    outline:none;
+  }
+  .form-group select:focus-visible{
+    border-color: orange;
+    outline:none;
+    box-shadow: 0 0 5px 2px #ff8861;
+  }
+  
+  select.placeholder {
+    color: #888; 
+
+  }
+  select:not(.placeholder) {
+    color: black; 
+  }
+  
+  option {
+    cursor: pointer;
+    color: black; 
+    background-color: white; 
+  }
+
+  .form-group input {
+    line-height: 1.5;
+    background-color: #FFF;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    transition: all .3s, border-color 0.3s, box-shadow 0.3s;
+    padding: 6px 11px;
+    font-size: 13px;
+    height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .form-group input:hover{
+    border-color: orange;
+    outline:none;
+  }
+  .form-group input:focus-visible{
+    border-color: orange;
+    outline:none;
+    box-shadow: 0 0 5px 2px #ff8861;
+  }
+
+
+.form-group label {
+  color: #a0a4a8;
+  position: relative;
+  font-weight: 500;
+  font-size: 17px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.required{
+  display: inline-block;
+  margin-right: 4px;
+  color: #f5222d;
+  font-size: 14px;
+  font-family: SimSun, sans-serif;
+  line-height: 1;
+  content: "*";
+}
+
+@media (max-width: 768px) {
+  .form-bpdy {
+    padding: 20px 15px;
+  }
+  
+  .form-group {
+    margin-bottom: 12px;
+  }
+}

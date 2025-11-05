@@ -1,0 +1,112 @@
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-box {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px; /* Default font size */
+  z-index: 1000;
+  white-space: nowrap;
+  max-width: 200px; /* Prevents the tooltip from being too wide */
+}
+
+.tooltip-box::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Tooltip positions */
+.tooltip-top {
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-top::after {
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px 5px 0;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip-right {
+  top: 50%;
+  left: 125%;
+  transform: translateY(-50%);
+}
+
+.tooltip-right::after {
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px 5px 5px 0;
+  border-color: transparent #333 transparent transparent;
+}
+
+.tooltip-bottom {
+  top: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip-bottom::after {
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 0 5px 5px;
+  border-color: transparent transparent #333 transparent;
+}
+
+.tooltip-left {
+  top: 50%;
+  right: 125%;
+  transform: translateY(-50%);
+}
+
+.tooltip-left::after {
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px 0 5px 5px;
+  border-color: transparent transparent transparent #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .tooltip-box {
+      font-size: 12px;
+      padding: 6px;
+  }
+}
+
+@media (max-width: 992px) {
+  .tooltip-box {
+      font-size: 11px;
+      padding: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tooltip-box {
+      font-size: 10px;
+      padding: 4px;
+      max-width: 150px; /* Smaller max-width for smaller screens */
+  }
+}
+
+@media (max-width: 576px) {
+  .tooltip-box {
+      font-size: 9px;
+      padding: 3px;
+      max-width: 120px; /* Further reduce max-width on very small screens */
+  }
+}

@@ -1,0 +1,69 @@
+.drawer {
+  position: fixed;
+  background-color: white;
+  overflow: auto;
+  transition: transform 0.3s ease-out;
+  z-index: 2000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.drawer-open-fromLeft {
+  transform: translateX(0);
+}
+
+.drawer-open-fromTop {
+  transform: translateY(0);
+}
+
+.drawer-open-fromRight {
+  transform: translateX(0);
+}
+
+.drawer-open-fromBottom {
+  transform: translateY(0);
+}
+
+.drawer-close-fromLeft {
+  transform: translateX(-100%);
+}
+
+.drawer-close-fromTop {
+  transform: translateY(-100%);
+}
+
+.drawer-close-fromRight {
+  transform: translateX(100%);
+}
+
+.drawer-close-fromBottom {
+  transform: translateY(100%);
+}
+
+/* Media Queries for responsiveness */
+@media (max-width: 1200px) {
+  .drawer {
+    width: 80%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 992px) {
+  .drawer {
+    width: 90%;
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .drawer {
+    width: 95%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .drawer {
+    width: 100%;
+    max-width: 100%;
+  }
+}

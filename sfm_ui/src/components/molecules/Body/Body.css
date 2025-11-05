@@ -1,0 +1,17 @@
+.body-wrapper {
+    margin: 12px 22px;
+    border-radius: 5px;
+    border: 0.8px solid grey;
+  }
+  
+ .body-container-content {
+    margin: 10px;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    .body-wrapper {
+      margin: 8px 16px;
+    }
+  }
+  

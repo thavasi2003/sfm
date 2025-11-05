@@ -1,0 +1,19 @@
+.container-body-newpta{
+    margin: 10px 22px;
+}
+
+.container-body-newpta-form{
+    width: 50%;
+}
+.container-body-newpta-email{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.container-body-newpta-email-form{
+    width: 50%;
+}
+.container-body-newpta-email-form-button{
+    margin-right: 430px;
+    height: 22px;
+}
