@@ -1,0 +1,47 @@
+
+.form-body {
+    padding: 35px 25px;
+  }
+
+  .form-group textarea {
+    font-family: sans-serif;
+    line-height: 1.5;
+    background-color: #FFF;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    transition: all .3s, border-color 0.3s, box-shadow 0.3s;
+    padding: 6px 11px;
+    font-size: 13px;
+    height: 80px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group textarea:hover{
+  border-color: orange;
+  outline:none;
+}
+.form-group textarea:focus-visible{
+  border-color: orange;
+  outline:none;
+  box-shadow: 0 0 5px 2px #ff8861;
+}
+
+.form-group textarea.placeholder {
+  color: #888; 
+  font-family: system-ui;
+}
+
+.newflow-button{
+    margin-bottom: 10px;
+    gap: 480px;
+    display: flex;
+    align-items: center;
+}
+
+
+@media (max-width: 768px) {
+    .form-body {
+      padding: 20px 15px;
+    }
+}

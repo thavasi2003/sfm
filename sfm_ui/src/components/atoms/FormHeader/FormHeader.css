@@ -1,0 +1,78 @@
+.formheader-wrapper {
+  background: #f2f3f7;
+  padding: 12px 20px;
+  border-bottom: 0.8px solid #dbdde0;
+}
+
+.formheader-title {
+  color: #495057;
+  font-style: normal;
+  font-weight: 400;
+  /* Default font size */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.formheader-close-icon {
+  cursor: pointer;
+  font-size: 24px; /* Default icon size */
+  margin-left: 10px;
+}
+
+/* Responsive design for different screen sizes */
+@media (max-width: 1200px) {
+  .formheader-title {
+    font-size: 15px;
+  }
+
+  .formheader-close-icon {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 992px) {
+  .formheader-wrapper {
+    padding: 10px 20px;
+  }
+
+  .formheader-title {
+    font-size: 14px;
+  }
+
+  .formheader-close-icon {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formheader-wrapper {
+    padding: 8px 16px;
+  }
+
+  .formheader-title {
+    font-size: 13px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .formheader-close-icon {
+    font-size: 18px;
+    margin-left: 0;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .formheader-wrapper {
+    padding: 6px 12px;
+  }
+
+  .formheader-title {
+    font-size: 12px;
+  }
+
+  .formheader-close-icon {
+    font-size: 16px;
+  }
+}
