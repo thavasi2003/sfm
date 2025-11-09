@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: coesfm-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ***REMOVED***
+      MYSQL_USER: ***REMOVED***
+      MYSQL_PASSWORD: ***REMOVED***
+    ports:
+      - "3308:***REMOVED***"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  backend:
+    build: ./sfm_api
+    container_name: sfm-backend
+    restart: always
+    env_file:
+      - ./sfm_api/.env
+    depends_on:
+      - mysql
+    ports:
+      - "***REMOVED***:***REMOVED***"
+    networks:
+      - app_network
+
+  frontend:
+    build: ./sfm_ui
+    container_name: sfm-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - app_network
+
+volumes:
+  mysql_data:
+
+networks:
+  app_network:
+    driver: bridge
