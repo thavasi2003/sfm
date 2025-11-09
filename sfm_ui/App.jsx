@@ -2,7 +2,7 @@ import "./Main.css";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { theme } from "./src/common/theme/Theme.jsx";
 import { RouterProvider } from "react-router-dom";
-import router from "./src/router";
+import router from "./Router.jsx";
 
 const App = () => {
   return (
