@@ -235,7 +235,7 @@ const Login = () => {
                 borderRadius: "2px",
               }}
             />
-            Login with Microsoft
+            Login with Microsoft on
           </Button>
         </Box>
       </Box>
