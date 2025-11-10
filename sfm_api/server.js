@@ -40,7 +40,7 @@ import "./src/config/sequelize.js"                     // <-- Added (Sequelize o
 import logoutRoute from './src/config/logout.js';  // <-- Added logout route
 // Middleware
 app.use(cors({
-  origin: ["http://***REMOVED***:3000"],            // <-- Modified for SSO frontend CORS
+  origin: ["http://***REMOVED***:80"],            // <-- Modified for SSO frontend CORS
   credentials: true
 }));
 
