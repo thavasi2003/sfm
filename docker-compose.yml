@@ -18,7 +18,9 @@ services:
       - app_network
 
   backend:
-    build: ./sfm_api
+    build:
+      context: ./sfm_api
+      dockerfile: Dockerfile
     container_name: sfm-backend
     restart: always
     env_file:
@@ -31,7 +33,9 @@ services:
       - app_network
 
   frontend:
-    build: ./sfm_ui
+    build:
+      context: ./sfm_ui
+      dockerfile: Dockerfile
     container_name: sfm-frontend
     restart: always
     depends_on:
