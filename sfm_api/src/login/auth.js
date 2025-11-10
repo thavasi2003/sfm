@@ -173,7 +173,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect(
-      `http://***REMOVED***:3000/verify-2fa?email=${encodeURIComponent(req.user.email)}`
+      `http://***REMOVED***:80/verify-2fa?email=${encodeURIComponent(req.user.email)}`
     );
   }
 );
@@ -190,7 +190,7 @@ router.get(
   passport.authenticate("microsoft", { failureRedirect: "/" }),
   (req, res) => {
     res.redirect(
-      `http://***REMOVED***:3000/verify-2fa?email=${encodeURIComponent(req.user.email)}`
+      `http://***REMOVED***:80/verify-2fa?email=${encodeURIComponent(req.user.email)}`
     );
   }
 );
