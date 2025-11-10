@@ -194,8 +194,7 @@ router.get(
     );
   }
 );
-
-/* ---------- 2FA VERIFICATION ---------- */
+/* ---------- 2FA VERIFICATION temp---------- */
 router.post("/verify-2fa", async (req, res) => {
   const { email, otp } = req.body;
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -211,9 +210,15 @@ router.post("/verify-2fa", async (req, res) => {
     if (user.twoFAToken.trim() !== otp.trim())
       return res.status(400).json({ message: "Invalid OTP" });
 
-    // ✅ Clear OTP and issue JWT
+    // ✅ Clear OTP
     user.twoFAToken = null;
     await user.save();
+
+    // ✅ JWT token
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is missing!");
+      return res.status(500).json({ message: "Server config error" });
+    }
 
     const token = jwt.sign(
       { id: user.id, email: user.email },
@@ -222,15 +227,20 @@ router.post("/verify-2fa", async (req, res) => {
     );
 
     // ✅ Log the successful login
-    await LoginLog.create({
-      userId: user.id,
-      email: user.email,
-      loginMethod: user.loginMethod,
-      ipAddress: ip,
-      userAgent,
-      status: "success",
-      loginTime: new Date()
-    });
+    try {
+      await LoginLog.create({
+        userId: user.id,
+        email: user.email,
+        loginMethod: user.loginMethod || "2FA",
+        ipAddress: ip,
+        userAgent,
+        status: "success",
+        loginTime: new Date(),
+      });
+    } catch (logErr) {
+      console.error("LoginLog Error:", logErr);
+      // Do not block login if logging fails
+    }
 
     res.json({
       message: "2FA verification successful",
@@ -242,6 +252,57 @@ router.post("/verify-2fa", async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+
+/* ---------- 2FA VERIFICATION ---------- */
+
+
+// router.post("/verify-2fa", async (req, res) => {
+//   const { email, otp } = req.body;
+//   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+//   const userAgent = req.headers["user-agent"];
+
+//   try {
+//     const user = await User.findOne({ where: { email } });
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     if (!user.twoFAToken)
+//       return res.status(400).json({ message: "OTP expired or not generated" });
+
+//     if (user.twoFAToken.trim() !== otp.trim())
+//       return res.status(400).json({ message: "Invalid OTP" });
+
+//     // ✅ Clear OTP and issue JWT
+//     user.twoFAToken = null;
+//     await user.save();
+
+//     const token = jwt.sign(
+//       { id: user.id, email: user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "1h" }
+//     );
+
+//     // ✅ Log the successful login
+//     await LoginLog.create({
+//       userId: user.id,
+//       email: user.email,
+//       loginMethod: user.loginMethod,
+//       ipAddress: ip,
+//       userAgent,
+//       status: "success",
+//       loginTime: new Date()
+//     });
+
+//     res.json({
+//       message: "2FA verification successful",
+//       user,
+//       token,
+//     });
+//   } catch (err) {
+//     console.error("2FA Error:", err);
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// });
 
 // /* ---------- LOGOUT ---------- */
 // router.get("/logout", (req, res, next) => {
