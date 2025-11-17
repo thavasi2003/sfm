@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ***REMOVED***
       MYSQL_PASSWORD: ***REMOVED***
     ports:
-      - "3308:***REMOVED***"
+      - "***REMOVED***:***REMOVED***"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
