@@ -63,11 +63,11 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.open("http://***REMOVED***:***REMOVED***/api/auth/google", "_self");
+    window.open("http://localhost:5000/api/auth/google", "_self");
   };
 
   const handleMicrosoftLogin = () => {
-    window.open("http://***REMOVED***:***REMOVED***/api/auth/microsoft", "_self");
+    window.open("http://localhost:5000/api/auth/microsoft", "_self");
   };
 
   return (

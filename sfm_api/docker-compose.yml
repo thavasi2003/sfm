@@ -7,11 +7,11 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: ***REMOVED***
-      MYSQL_USER: ***REMOVED***
-      MYSQL_PASSWORD: ***REMOVED***
+      MYSQL_DATABASE: admin_coedev
+      MYSQL_USER: coedev_usr
+      MYSQL_PASSWORD: coedev123
     ports:
-      - "***REMOVED***:***REMOVED***"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:

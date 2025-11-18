@@ -35,7 +35,7 @@ const Header = ({ isSidebarOpen, toggleSidebar }) => {
         const userId = user.user.id;
 
         // Call backend logout API
-        await fetch("http://***REMOVED***:***REMOVED***/api/logout", {
+        await fetch("http://localhost:5000/api/logout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ userId }),

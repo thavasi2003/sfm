@@ -25,7 +25,7 @@ const Verify2FA = () => {
     }
 
     try {
-      const res = await fetch("http://***REMOVED***:***REMOVED***/api/auth/verify-2fa", {
+      const res = await fetch("http://localhost:5000/api/auth/verify-2fa", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),

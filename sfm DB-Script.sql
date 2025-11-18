@@ -251,7 +251,7 @@ INSERT INTO school (id, zone, school_name, address) VALUES
 (18, 'EAST-G2', 'St Hilda''s Secondary School', '2, Tampines St 82,S(528986)'),
 (19, 'EAST-G2', 'St Patrick''s School', '490, East Coast Rd,S(429058)'),
 (20, 'EAST-G2', 'Tampines Primary School - [inclusive MOE Kindergarten & Kindergarten Care]', '250, Tampines St 12,S(529426)'),
-(21, 'EAST-G2', 'Temasek Secondary School', '600, Upper East Coast Rd,S(***REMOVED***561)'),
+(21, 'EAST-G2', 'Temasek Secondary School', '600, Upper East Coast Rd,S(465561)'),
 (22, 'EAST-G2', 'Victoria School', '2, Siglap Link,S(448880)'),
 (23, 'EAST-G2', 'CHIJ Katong Convent', '346, Marine Terrace,S(449150)'),
 (24, 'EAST-G2', 'Temasek Primary School', '501, Bedok South Ave 3,S(469300)'),

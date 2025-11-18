@@ -34,32 +34,32 @@ jobs:
           cd sfm_api
           npm install
 
-      - name: Update Backend ENV
+      - name: Update Backend ENV from Secrets
         run: |
           cd sfm_api
-          echo DB_HOST=***REMOVED*** > .env
-          echo DB_PORT=***REMOVED*** >> .env
-          echo DB_USER=***REMOVED*** >> .env
-          echo DB_PASS=***REMOVED*** >> .env
-          echo DB_NAME=***REMOVED*** >> .env
-          echo NODE_ENV=development >> .env
-          echo PORT=***REMOVED*** >> .env
+          echo DB_HOST=${{ secrets.DB_HOST }} > .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo DB_USER=${{ secrets.DB_USER }} >> .env
+          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+          echo PORT=${{ secrets.PORT }} >> .env
 
-          echo EMAIL_HOST=***REMOVED*** >> .env
-          echo EMAIL_PORT=***REMOVED*** >> .env
-          echo EMAIL_USER1=***REMOVED*** >> .env
-          echo EMAIL_PASS1=***REMOVED*** >> .env
+          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+          echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+          echo EMAIL_USER1=${{ secrets.EMAIL_USER1 }} >> .env
+          echo EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }} >> .env
 
-          echo GOOGLE_CLIENT_ID=***REMOVED*** >> .env
-          echo GOOGLE_CLIENT_SECRET=***REMOVED*** >> .env
+          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
 
-          echo MICROSOFT_CLIENT_ID=***REMOVED*** >> .env
-          echo MICROSOFT_SECRET=***REMOVED*** >> .env
-          echo MICROSOFT_TENANT_ID=***REMOVED*** >> .env
-          echo MICROSOFT_CALLBACK_URL=http://***REMOVED***:***REMOVED***/api/auth/microsoft/callback >> .env
+          echo MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }} >> .env
+          echo MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }} >> .env
+          echo MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }} >> .env
+          echo MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }} >> .env
 
-          echo EMAIL_USER=***REMOVED*** >> .env
-          echo EMAIL_PASS=***REMOVED*** >> .env
+          echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
+          echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
 
       - name: Start Backend With PM2
         run: |
