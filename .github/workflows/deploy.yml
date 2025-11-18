@@ -1,0 +1,82 @@
+name: SFM CI/CD
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      # ---------------- Frontend ----------------
+      - name: Install Frontend Dependencies
+        run: |
+          cd sfm_ui
+          npm install
+
+      - name: Build Frontend
+        run: |
+          cd sfm_ui
+          npm run build
+
+      # --------------- Backend -------------------
+      - name: Install Backend Dependencies
+        run: |
+          cd sfm_api
+          npm install
+
+      - name: Update Backend ENV
+        run: |
+          cd sfm_api
+          echo DB_HOST=***REMOVED*** > .env
+          echo DB_PORT=***REMOVED*** >> .env
+          echo DB_USER=***REMOVED*** >> .env
+          echo DB_PASS=***REMOVED*** >> .env
+          echo DB_NAME=***REMOVED*** >> .env
+          echo NODE_ENV=development >> .env
+          echo PORT=***REMOVED*** >> .env
+
+          echo EMAIL_HOST=***REMOVED*** >> .env
+          echo EMAIL_PORT=***REMOVED*** >> .env
+          echo EMAIL_USER1=***REMOVED*** >> .env
+          echo EMAIL_PASS1=***REMOVED*** >> .env
+
+          echo GOOGLE_CLIENT_ID=***REMOVED*** >> .env
+          echo GOOGLE_CLIENT_SECRET=***REMOVED*** >> .env
+
+          echo MICROSOFT_CLIENT_ID=***REMOVED*** >> .env
+          echo MICROSOFT_SECRET=***REMOVED*** >> .env
+          echo MICROSOFT_TENANT_ID=***REMOVED*** >> .env
+          echo MICROSOFT_CALLBACK_URL=http://***REMOVED***:***REMOVED***/api/auth/microsoft/callback >> .env
+
+          echo EMAIL_USER=***REMOVED*** >> .env
+          echo EMAIL_PASS=***REMOVED*** >> .env
+
+      - name: Start Backend With PM2
+        run: |
+          cd sfm_api
+          pm2 stop sfm-api || true
+          pm2 delete sfm-api || true
+          pm2 start server.js --name sfm-api
+          pm2 save
+
+      # ---------------- NGINX --------------------
+      - name: Deploy Frontend to NGINX
+        run: |
+          rmdir /s /q "D:\nginx\html" 2>nul
+          mkdir "D:\nginx\html"
+          xcopy /E /I /Y sfm_ui\dist "D:\nginx\html"
+
+      - name: Restart NGINX
+        run: |
+          taskkill /F /IM nginx.exe 2>nul || true
+          start /B "" "D:\nginx\nginx.exe" -p "D:\nginx" -c "conf\nginx.conf"
