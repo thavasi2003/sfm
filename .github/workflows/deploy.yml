@@ -42,25 +42,27 @@ jobs:
       - name: Update Backend ENV from Secrets
         run: |
           cd sfm_api
-          echo DB_HOST=${{ secrets.DB_HOST }} > .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          echo DB_USER=${{ secrets.DB_USER }} >> .env
-          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
-          echo PORT=${{ secrets.PORT }} >> .env
-          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
-          echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
-          echo EMAIL_USER1=${{ secrets.EMAIL_USER1 }} >> .env
-          echo EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }} >> .env
-          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
-          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
-          echo MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }} >> .env
-          echo MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }} >> .env
-          echo MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }} >> .env
-          echo MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }} >> .env
-          echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
-          echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
+          @"
+DB_HOST=${{ secrets.DB_HOST }}
+DB_PORT=${{ secrets.DB_PORT }}
+DB_USER=${{ secrets.DB_USER }}
+DB_PASS=${{ secrets.DB_PASS }}
+DB_NAME=${{ secrets.DB_NAME }}
+NODE_ENV=${{ secrets.NODE_ENV }}
+PORT=${{ secrets.PORT }}
+EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+EMAIL_USER1=${{ secrets.EMAIL_USER1 }}
+EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }}
+GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }}
+MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }}
+MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }}
+MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }}
+EMAIL_USER=${{ secrets.EMAIL_USER }}
+EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+"@ | Out-File -Encoding UTF8 .env
         shell: powershell
 
       - name: Install PM2
@@ -80,17 +82,29 @@ jobs:
       # ---------------- NGINX Deployment ----------------
       - name: Deploy Frontend to NGINX
         run: |
+          # Stop NGINX
           Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
-          if (Test-Path "D:\nginx\html") {
-              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "D:\nginx\html"
+          Start-Sleep -Seconds 5
+
+          # Remove old folder safely
+          $htmlPath = "D:\nginx\html"
+          if (Test-Path $htmlPath) {
+              try { Remove-Item -Recurse -Force -ErrorAction Stop $htmlPath }
+              catch { Write-Host "Folder still in use. Skipping removal..." }
           }
-          New-Item -ItemType Directory -Path "D:\nginx\html" -Force
-          robocopy sfm_ui\dist "D:\nginx\html" /E /NFL /NDL /NJH /NJS /nc /ns /np
+
+          # Recreate folder
+          if (!(Test-Path $htmlPath)) {
+              New-Item -ItemType Directory -Path $htmlPath -Force
+          }
+
+          # Copy frontend build
+          $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+          robocopy $source $htmlPath /E /NFL /NDL /NJH /NJS /nc /ns /np
+
         shell: powershell
 
       - name: Restart NGINX
         run: |
           Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
         shell: powershell
-
-
