@@ -79,12 +79,22 @@ jobs:
         shell: powershell
 
       # ---------------- NGINX --------------------
+            # ---------------- NGINX --------------------
       - name: Deploy Frontend to NGINX
         run: |
-          Remove-Item -Recurse -Force "D:\nginx\html" -ErrorAction SilentlyContinue
+          if (Test-Path "D:\nginx\html") {
+              Remove-Item -Recurse -Force "D:\nginx\html"
+          }
           New-Item -ItemType Directory -Path "D:\nginx\html"
           robocopy sfm_ui\dist "D:\nginx\html" /E /NFL /NDL /NJH /NJS /nc /ns /np
         shell: powershell
+
+      - name: Restart NGINX
+        run: |
+          Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
+          Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+        shell: powershell
+
 
       - name: Restart NGINX
         run: |
