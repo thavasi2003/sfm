@@ -9,10 +9,12 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # ---------------- Checkout Code ----------------
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Node
+      # ---------------- Node Setup ----------------
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -22,7 +24,7 @@ jobs:
       - name: Install Frontend Dependencies
         run: |
           cd sfm_ui
-          npm install
+          npm ci
         shell: powershell
 
       - name: Build Frontend
@@ -31,80 +33,76 @@ jobs:
           npm run build
         shell: powershell
 
-      # --------------- Backend -------------------
+      # ---------------- Backend ----------------
       - name: Install Backend Dependencies
         run: |
           cd sfm_api
-          npm install
+          npm ci
         shell: powershell
 
-      - name: Update Backend ENV from Secrets
+      - name: Update Backend .env from Secrets
         run: |
-          cd sfm_api
-          echo DB_HOST=${{ secrets.DB_HOST }} > .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          echo DB_USER=${{ secrets.DB_USER }} >> .env
-          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-          echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
-          echo PORT=${{ secrets.PORT }} >> .env
+          $envFile = "sfm_api\.env"
+          @"
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASS=${{ secrets.DB_PASS }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            PORT=${{ secrets.PORT }}
+            EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+            EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+            EMAIL_USER1=${{ secrets.EMAIL_USER1 }}
+            EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }}
+            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }}
+            MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }}
+            MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }}
+            MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }}
+            EMAIL_USER=${{ secrets.EMAIL_USER }}
+            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            "@ | Out-File -FilePath $envFile -Encoding utf8 -Force
+                    shell: powershell
 
-          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
-          echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
-          echo EMAIL_USER1=${{ secrets.EMAIL_USER1 }} >> .env
-          echo EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }} >> .env
+                  - name: Install PM2 Globally
+                    run: npm install -g pm2
+                    shell: powershell
 
-          echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
-          echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+                  - name: Start/Restart Backend with PM2
+                    run: |
+                      cd sfm_api
+                      $env:PM2_HOME="D:\etc\.pm2"
 
-          echo MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }} >> .env
-          echo MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }} >> .env
-          echo MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }} >> .env
-          echo MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }} >> .env
+                      # Stop existing process if running
+                      try { pm2 stop sfm-api -s } catch {}
+                      try { pm2 delete sfm-api -s } catch {}
 
-          echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
-          echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
-        shell: powershell
+                      # Start backend
+                      pm2 start server.js --name sfm-api
+                      pm2 save
+                    shell: powershell
 
-      - name: Install PM2
-        run: npm install -g pm2
-        shell: powershell
+                  # ---------------- Frontend Deployment to NGINX ----------------
+                  - name: Deploy Frontend to NGINX
+                    run: |
+                      # Stop NGINX if running
+                      Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
 
-      - name: Start Backend With PM2
-        run: |
-          cd sfm_api
-          # Set PM2 home to avoid Windows warning
-          $env:PM2_HOME="D:\etc\.pm2"
+                      # Remove old html folder safely
+                      if (Test-Path "D:\nginx\html") {
+                          Remove-Item -Recurse -Force "D:\nginx\html"
+                      }
 
-          # Stop/delete if already exists
-          try { pm2 stop sfm-api } catch {}
-          try { pm2 delete sfm-api } catch {}
+                      # Recreate html folder
+                      New-Item -ItemType Directory -Path "D:\nginx\html" -Force
 
-          # Start backend
-          pm2 start server.js --name sfm-api
-          pm2 save
-        shell: powershell
+                      # Copy build files
+                      robocopy sfm_ui\dist D:\nginx\html /E /NFL /NDL /NJH /NJS /nc /ns /np
+                    shell: powershell
 
-      # ---------------- NGINX --------------------
-      - name: Deploy Frontend to NGINX
-        run: |
-          # Stop NGINX to unlock files
-          Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
-
-          # Remove old html folder safely
-          if (Test-Path "D:\nginx\html") {
-              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "D:\nginx\html"
-          }
-
-          # Recreate folder
-          New-Item -ItemType Directory -Path "D:\nginx\html" -Force
-
-          # Copy frontend build
-          robocopy sfm_ui\dist "D:\nginx\html" /E /NFL /NDL /NJH /NJS /nc /ns /np
-        shell: powershell
-
-      - name: Restart NGINX
-        run: |
-          # Start NGINX
-          Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
-        shell: powershell
+                  - name: Restart NGINX
+                    run: |
+                      Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+                    shell: powershell
