@@ -22,17 +22,20 @@ jobs:
         run: |
           cd sfm_ui
           npm install
+        shell: powershell
 
       - name: Build Frontend
         run: |
           cd sfm_ui
           npm run build
+        shell: powershell
 
       # --------------- Backend -------------------
       - name: Install Backend Dependencies
         run: |
           cd sfm_api
           npm install
+        shell: powershell
 
       - name: Update Backend ENV from Secrets
         run: |
@@ -60,6 +63,11 @@ jobs:
 
           echo EMAIL_USER=${{ secrets.EMAIL_USER }} >> .env
           echo EMAIL_PASS=${{ secrets.EMAIL_PASS }} >> .env
+        shell: powershell
+
+      - name: Install PM2
+        run: npm install -g pm2
+        shell: powershell
 
       - name: Start Backend With PM2
         run: |
@@ -73,11 +81,13 @@ jobs:
       # ---------------- NGINX --------------------
       - name: Deploy Frontend to NGINX
         run: |
-          rmdir /s /q "D:\nginx\html" 2>nul
-          mkdir "D:\nginx\html"
-          xcopy /E /I /Y sfm_ui\dist "D:\nginx\html"
+          Remove-Item -Recurse -Force "D:\nginx\html" -ErrorAction SilentlyContinue
+          New-Item -ItemType Directory -Path "D:\nginx\html"
+          robocopy sfm_ui\dist "D:\nginx\html" /E /NFL /NDL /NJH /NJS /nc /ns /np
+        shell: powershell
 
       - name: Restart NGINX
         run: |
-          taskkill /F /IM nginx.exe 2>nul || true
-          start /B "" "D:\nginx\nginx.exe" -p "D:\nginx" -c "conf\nginx.conf"
+          Stop-Process -Name nginx -Force -ErrorAction SilentlyContinue
+          Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+        shell: powershell
