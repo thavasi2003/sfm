@@ -64,10 +64,11 @@ jobs:
       - name: Start Backend With PM2
         run: |
           cd sfm_api
-          pm2 stop sfm-api || true
-          pm2 delete sfm-api || true
+          try { pm2 stop sfm-api } catch {}
+          try { pm2 delete sfm-api } catch {}
           pm2 start server.js --name sfm-api
           pm2 save
+        shell: powershell
 
       # ---------------- NGINX --------------------
       - name: Deploy Frontend to NGINX
