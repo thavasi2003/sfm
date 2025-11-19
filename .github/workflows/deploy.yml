@@ -108,5 +108,3 @@ jobs:
           # Start NGINX
           Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
         shell: powershell
-
-        
