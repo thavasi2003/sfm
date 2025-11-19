@@ -16,6 +16,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
+        shell: powershell
 
       # ---------------- Frontend ----------------
       - name: Install Frontend Dependencies
@@ -72,32 +73,38 @@ jobs:
       - name: Start Backend With PM2
         run: |
           cd sfm_api
+          # Set PM2 home to avoid Windows warning
+          $env:PM2_HOME="D:\etc\.pm2"
+
+          # Stop/delete if already exists
           try { pm2 stop sfm-api } catch {}
           try { pm2 delete sfm-api } catch {}
+
+          # Start backend
           pm2 start server.js --name sfm-api
           pm2 save
         shell: powershell
 
       # ---------------- NGINX --------------------
-            # ---------------- NGINX --------------------
       - name: Deploy Frontend to NGINX
         run: |
+          # Stop NGINX to unlock files
+          Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
+
+          # Remove old html folder safely
           if (Test-Path "D:\nginx\html") {
-              Remove-Item -Recurse -Force "D:\nginx\html"
+              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "D:\nginx\html"
           }
-          New-Item -ItemType Directory -Path "D:\nginx\html"
+
+          # Recreate folder
+          New-Item -ItemType Directory -Path "D:\nginx\html" -Force
+
+          # Copy frontend build
           robocopy sfm_ui\dist "D:\nginx\html" /E /NFL /NDL /NJH /NJS /nc /ns /np
         shell: powershell
 
       - name: Restart NGINX
         run: |
-          Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
-          Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
-        shell: powershell
-
-
-      - name: Restart NGINX
-        run: |
-          Stop-Process -Name nginx -Force -ErrorAction SilentlyContinue
+          # Start NGINX
           Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
         shell: powershell
