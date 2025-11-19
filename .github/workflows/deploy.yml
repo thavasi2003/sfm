@@ -39,32 +39,6 @@ jobs:
           npm install
         shell: powershell
 
-      - name: Update Backend ENV from Secrets
-        run: |
-          cd sfm_api
-          @"
-DB_HOST=${{ secrets.DB_HOST }}
-DB_PORT=${{ secrets.DB_PORT }}
-DB_USER=${{ secrets.DB_USER }}
-DB_PASS=${{ secrets.DB_PASS }}
-DB_NAME=${{ secrets.DB_NAME }}
-NODE_ENV=${{ secrets.NODE_ENV }}
-PORT=${{ secrets.PORT }}
-EMAIL_HOST=${{ secrets.EMAIL_HOST }}
-EMAIL_PORT=${{ secrets.EMAIL_PORT }}
-EMAIL_USER1=${{ secrets.EMAIL_USER1 }}
-EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }}
-GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }}
-MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }}
-MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }}
-MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }}
-EMAIL_USER=${{ secrets.EMAIL_USER }}
-EMAIL_PASS=${{ secrets.EMAIL_PASS }}
-"@ | Out-File -Encoding UTF8 .env
-        shell: powershell
-
       - name: Install PM2
         run: npm install -g pm2
         shell: powershell
