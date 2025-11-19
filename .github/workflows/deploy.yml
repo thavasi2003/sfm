@@ -44,65 +44,65 @@ jobs:
         run: |
           $envFile = "sfm_api\.env"
           @"
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASS=${{ secrets.DB_PASS }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            NODE_ENV=${{ secrets.NODE_ENV }}
-            PORT=${{ secrets.PORT }}
-            EMAIL_HOST=${{ secrets.EMAIL_HOST }}
-            EMAIL_PORT=${{ secrets.EMAIL_PORT }}
-            EMAIL_USER1=${{ secrets.EMAIL_USER1 }}
-            EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }}
-            GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }}
-            MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }}
-            MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }}
-            MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }}
-            EMAIL_USER=${{ secrets.EMAIL_USER }}
-            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
-            "@ | Out-File -FilePath $envFile -Encoding utf8 -Force
-                    shell: powershell
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASS=${{ secrets.DB_PASS }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          NODE_ENV=${{ secrets.NODE_ENV }}
+          PORT=${{ secrets.PORT }}
+          EMAIL_HOST=${{ secrets.EMAIL_HOST }}
+          EMAIL_PORT=${{ secrets.EMAIL_PORT }}
+          EMAIL_USER1=${{ secrets.EMAIL_USER1 }}
+          EMAIL_PASS1=${{ secrets.EMAIL_PASS1 }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          MICROSOFT_CLIENT_ID=${{ secrets.MICROSOFT_CLIENT_ID }}
+          MICROSOFT_SECRET=${{ secrets.MICROSOFT_SECRET }}
+          MICROSOFT_TENANT_ID=${{ secrets.MICROSOFT_TENANT_ID }}
+          MICROSOFT_CALLBACK_URL=${{ secrets.MICROSOFT_CALLBACK_URL }}
+          EMAIL_USER=${{ secrets.EMAIL_USER }}
+          EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+          "@ | Out-File -FilePath $envFile -Encoding utf8 -Force
+                  shell: powershell
 
-                  - name: Install PM2 Globally
-                    run: npm install -g pm2
-                    shell: powershell
+                - name: Install PM2 Globally
+                  run: npm install -g pm2
+                  shell: powershell
 
-                  - name: Start/Restart Backend with PM2
-                    run: |
-                      cd sfm_api
-                      $env:PM2_HOME="D:\etc\.pm2"
+                - name: Start/Restart Backend with PM2
+                  run: |
+                    cd sfm_api
+                    $env:PM2_HOME="D:\etc\.pm2"
 
-                      # Stop existing process if running
-                      try { pm2 stop sfm-api -s } catch {}
-                      try { pm2 delete sfm-api -s } catch {}
+                    # Stop existing process if running
+                    try { pm2 stop sfm-api -s } catch {}
+                    try { pm2 delete sfm-api -s } catch {}
 
-                      # Start backend
-                      pm2 start server.js --name sfm-api
-                      pm2 save
-                    shell: powershell
+                    # Start backend
+                    pm2 start server.js --name sfm-api
+                    pm2 save
+                  shell: powershell
 
-                  # ---------------- Frontend Deployment to NGINX ----------------
-                  - name: Deploy Frontend to NGINX
-                    run: |
-                      # Stop NGINX if running
-                      Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
+                # ---------------- Frontend Deployment to NGINX ----------------
+                - name: Deploy Frontend to NGINX
+                  run: |
+                    # Stop NGINX if running
+                    Get-Process nginx -ErrorAction SilentlyContinue | Stop-Process -Force
 
-                      # Remove old html folder safely
-                      if (Test-Path "D:\nginx\html") {
-                          Remove-Item -Recurse -Force "D:\nginx\html"
-                      }
+                    # Remove old html folder safely
+                    if (Test-Path "D:\nginx\html") {
+                        Remove-Item -Recurse -Force "D:\nginx\html"
+                    }
 
-                      # Recreate html folder
-                      New-Item -ItemType Directory -Path "D:\nginx\html" -Force
+                    # Recreate html folder
+                    New-Item -ItemType Directory -Path "D:\nginx\html" -Force
 
-                      # Copy build files
-                      robocopy sfm_ui\dist D:\nginx\html /E /NFL /NDL /NJH /NJS /nc /ns /np
-                    shell: powershell
+                    # Copy build files
+                    robocopy sfm_ui\dist D:\nginx\html /E /NFL /NDL /NJH /NJS /nc /ns /np
+                  shell: powershell
 
-                  - name: Restart NGINX
-                    run: |
-                      Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
-                    shell: powershell
+                - name: Restart NGINX
+                  run: |
+                    Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+                  shell: powershell
