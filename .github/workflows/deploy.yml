@@ -50,18 +50,21 @@ jobs:
           # PM2 HOME
           $env:PM2_HOME="D:\etc\.pm2"
 
-          # PM2 Executable
-          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\pm2.cmd"
+          # PM2 REAL CLI PATH
+          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\node_modules\pm2\lib\CLI.js"
 
-          # Stop previous instance
-          & $pm2 stop sfm-api --silent 2>$null
-          & $pm2 delete sfm-api --silent 2>$null
+          Write-Host "Using PM2 CLI: $pm2"
+
+          # Stop old instance
+          node $pm2 stop sfm-api --silent 2>$null
+          node $pm2 delete sfm-api --silent 2>$null
 
           # Start backend
-          & $pm2 start server.js --name sfm-api
+          node $pm2 start server.js --name sfm-api
 
-          # Save PM2 process list
-          & $pm2 save
+          # Save
+          node $pm2 save
+
 
       # ---------------- NGINX DEPLOY ----------------
       - name: Deploy Frontend to NGINX
