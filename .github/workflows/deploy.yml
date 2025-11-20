@@ -50,21 +50,20 @@ jobs:
           # PM2 HOME
           $env:PM2_HOME="D:\etc\.pm2"
 
-          # PM2 REAL CLI PATH
-          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\node_modules\pm2\lib\CLI.js"
+          # Correct PM2 Path (your system path)
+          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\node_modules\pm2\bin\pm2.ps1"
 
-          Write-Host "Using PM2 CLI: $pm2"
+          Write-Host "Using PM2: $pm2"
 
-          # Stop old instance
-          node $pm2 stop sfm-api --silent 2>$null
-          node $pm2 delete sfm-api --silent 2>$null
+          # Stop old process
+          & $pm2 stop sfm-api --silent 2>$null
+          & $pm2 delete sfm-api --silent 2>$null
 
           # Start backend
-          node $pm2 start server.js --name sfm-api
+          & $pm2 start server.js --name sfm-api
 
           # Save
-          node $pm2 save
-
+          & $pm2 save
 
       # ---------------- NGINX DEPLOY ----------------
       - name: Deploy Frontend to NGINX
@@ -72,17 +71,14 @@ jobs:
           $nginxExe = "D:\nginx\nginx.exe"
           if (Test-Path $nginxExe) { & $nginxExe -p "D:\nginx" -s stop }
           Start-Sleep -Seconds 3
-
           $htmlPath = "D:\nginx\html"
           if (Test-Path $htmlPath) {
               try { Remove-Item -Recurse -Force -ErrorAction Stop $htmlPath }
               catch { Write-Host "Folder still busy, skipping..." }
           }
-
           if (!(Test-Path $htmlPath)) {
               New-Item -ItemType Directory -Path $htmlPath -Force
           }
-
           $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
           robocopy $source $htmlPath /E
         shell: powershell
