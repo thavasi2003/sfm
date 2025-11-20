@@ -12,34 +12,34 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Install Node
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
       # ---------------- Frontend ----------------
       - name: Install Frontend Dependencies
+        shell: powershell
         run: |
           cd sfm_ui
           npm install
-        shell: powershell
 
       - name: Build Frontend
+        shell: powershell
         run: |
           cd sfm_ui
           npm run build
-        shell: powershell
 
       # ---------------- Backend ----------------
       - name: Install Backend Dependencies
+        shell: powershell
         run: |
           cd sfm_api
           npm install
-        shell: powershell
 
       - name: Install PM2
-        run: npm install -g pm2
         shell: powershell
+        run: npm install -g pm2
 
       # ---------------- PM2 START ----------------
       - name: Start Backend with PM2
@@ -47,43 +47,54 @@ jobs:
         run: |
           cd sfm_api
 
-          # PM2 HOME
+          # PM2 Folder
           $env:PM2_HOME="D:\etc\.pm2"
 
-          # Correct PM2 Path (your system path)
-          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\node_modules\pm2\bin\pm2.ps1"
+          # Correct PM2 Path
+          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\pm2.cmd"
 
           Write-Host "Using PM2: $pm2"
 
-          # Stop old process
-          & $pm2 stop sfm-api --silent 2>$null
-          & $pm2 delete sfm-api --silent 2>$null
+          # Stop old app (ignore errors if not found)
+          & $pm2 stop sfm-api 2>$null
+          & $pm2 delete sfm-api 2>$null
 
           # Start backend
           & $pm2 start server.js --name sfm-api
 
-          # Save
+          # Save process list
           & $pm2 save
 
-      # ---------------- NGINX DEPLOY ----------------
+      # ---------------- Deploy Frontend to NGINX ----------------
       - name: Deploy Frontend to NGINX
+        shell: powershell
         run: |
-          $nginxExe = "D:\nginx\nginx.exe"
-          if (Test-Path $nginxExe) { & $nginxExe -p "D:\nginx" -s stop }
-          Start-Sleep -Seconds 3
-          $htmlPath = "D:\nginx\html"
-          if (Test-Path $htmlPath) {
-              try { Remove-Item -Recurse -Force -ErrorAction Stop $htmlPath }
-              catch { Write-Host "Folder still busy, skipping..." }
+          $nginx = "D:\nginx\nginx.exe"
+
+          if (Test-Path $nginx) {
+              & $nginx -p "D:\nginx" -s stop
           }
-          if (!(Test-Path $htmlPath)) {
+
+          Start-Sleep -Seconds 3
+
+          $htmlPath = "D:\nginx\html"
+
+          if (Test-Path $htmlPath) {
+              try {
+                  Remove-Item "$htmlPath\*" -Recurse -Force
+              } catch {
+                  Write-Host "Folder in use, skipping delete"
+              }
+          } else {
               New-Item -ItemType Directory -Path $htmlPath -Force
           }
-          $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
-          robocopy $source $htmlPath /E
-        shell: powershell
 
+          $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+
+          robocopy $source $htmlPath /E
+
+      # ---------------- Restart NGINX ----------------
       - name: Restart NGINX
+        shell: powershell
         run: |
           Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
-        shell: powershell
