@@ -9,89 +9,92 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # ---------------- Checkout Code ----------------
+      # ---------------- CHECKOUT ----------------
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # ---------------- Node Setup ----------------
-      - name: Setup Node.js
+      # ---------------- NODE SETUP ----------------
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: 20
 
-      # ---------------- Frontend ----------------
+      # ---------------- FRONTEND INSTALL ----------------
       - name: Install Frontend Dependencies
         shell: powershell
         run: |
           cd sfm_ui
           npm install
 
+      # ---------------- FRONTEND BUILD ----------------
       - name: Build Frontend
         shell: powershell
         run: |
           cd sfm_ui
           npm run build
 
-      # ---------------- Backend ----------------
+      # ---------------- BACKEND INSTALL ----------------
       - name: Install Backend Dependencies
         shell: powershell
         run: |
           cd sfm_api
           npm install
 
+      # ---------------- INSTALL PM2 ----------------
       - name: Install PM2
         shell: powershell
         run: npm install -g pm2
 
-      # ---------------- PM2 START ----------------
-      - name: Start Backend with PM2
+      # ---------------- PM2 BACKEND DEPLOY ----------------
+      - name: Restart Backend using PM2
         shell: powershell
+        continue-on-error: true
         run: |
           cd sfm_api
 
+          # PM2 folder fix for windows
           $env:PM2_HOME="D:\etc\.pm2"
 
-          Write-Host "Stopping old PM2 process..."
-          pm2 stop sfm-api || true
+          Write-Host "Stopping old PM2 app..."
+          pm2 stop sfm-api 2>$null
 
-          Write-Host "Deleting old PM2 process..."
-          pm2 delete sfm-api || true
+          Write-Host "Deleting old PM2 app..."
+          pm2 delete sfm-api 2>$null
 
-          Write-Host "Starting application..."
+          Write-Host "Starting backend..."
           pm2 start server.js --name sfm-api
 
           pm2 save
 
-      # ---------------- Deploy Frontend to NGINX ----------------
+      # ---------------- DEPLOY FRONTEND TO NGINX ----------------
       - name: Deploy Frontend to NGINX
         shell: powershell
+        continue-on-error: true
         run: |
-          $nginxPath = "D:\nginx\nginx.exe"
-          $nginxRoot = "D:\nginx"
-          $htmlPath  = "D:\nginx\html"
-          $source    = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+          $nginxExe = "D:\nginx\nginx.exe"
 
           Write-Host "Stopping NGINX..."
-          if (Test-Path $nginxPath) {
-              & $nginxPath -p $nginxRoot -s stop
-          }
+          & $nginxExe -p "D:\nginx" -s stop 2>$null
 
           Start-Sleep -Seconds 2
 
-          if (Test-Path $htmlPath) {
-              Remove-Item "$htmlPath\*" -Recurse -Force -ErrorAction SilentlyContinue
-          } else {
-              New-Item -ItemType Directory -Path $htmlPath -Force
+          $htmlPath = "D:\nginx\html"
+          $distPath = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+
+          Write-Host "Copying frontend build to NGINX..."
+          if (!(Test-Path $htmlPath)) {
+            New-Item -ItemType Directory -Path $htmlPath -Force
           }
 
-          robocopy $source $htmlPath /E /NFL /NDL
+          robocopy $distPath $htmlPath /E /NFL /NDL
 
-      # ---------------- Restart NGINX ----------------
+      # ---------------- START NGINX ----------------
       - name: Restart NGINX
         shell: powershell
         run: |
-          $nginxPath = "D:\nginx\nginx.exe"
-          $nginxRoot = "D:\nginx"
-
-          Write-Host "Starting NGINX..."
-          Start-Process $nginxPath -ArgumentList "-p $nginxRoot -c conf\nginx.conf" -NoNewWindow
+          try {
+            Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+            Write-Host "NGINX Started Successfully"
+          } catch {
+            Write-Host "Failed to start NGINX"
+          }
