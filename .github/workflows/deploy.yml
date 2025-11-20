@@ -118,3 +118,4 @@ jobs:
           } catch {
               Write-Host "Failed to start NGINX"
           }
+
