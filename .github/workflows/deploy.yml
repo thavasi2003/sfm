@@ -43,7 +43,7 @@ jobs:
 
       # ---------------- PM2 START ----------------
       - name: Start Backend with PM2
-        shell: pwsh
+        shell: powershell
         run: |
           cd sfm_api
 
