@@ -27,7 +27,8 @@ jobs:
 
       - name: Restart app using PM2
         run: |
-          pm2 stop sfm-api || true
+          pm2 delete sfm-api
           pm2 start server.js --name sfm-api
           pm2 save
         working-directory: sfm_api
+
