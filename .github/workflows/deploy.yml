@@ -9,13 +9,15 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      # ---------------- Checkout Code ----------------
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      # ---------------- Node Setup ----------------
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: "20"
 
       # ---------------- Frontend ----------------
       - name: Install Frontend Dependencies
@@ -42,80 +44,54 @@ jobs:
         run: npm install -g pm2
 
       # ---------------- PM2 START ----------------
-      # ---------------- PM2 START ----------------
       - name: Start Backend with PM2
         shell: powershell
-        continue-on-error: true
         run: |
           cd sfm_api
+
           $env:PM2_HOME="D:\etc\.pm2"
-      
-          # Show pm2 path
-          Get-Command pm2
-      
+
           Write-Host "Stopping old PM2 process..."
-          try {
-              pm2 stop sfm-api
-          } catch {
-              Write-Host "Process not running"
-          }
-      
+          pm2 stop sfm-api || true
+
           Write-Host "Deleting old PM2 process..."
-          try {
-              pm2 delete sfm-api
-          } catch {
-              Write-Host "Process not found"
-          }
-      
-          Write-Host "Starting app with PM2..."
+          pm2 delete sfm-api || true
+
+          Write-Host "Starting application..."
           pm2 start server.js --name sfm-api
-      
-          Write-Host "Saving PM2 process list..."
+
           pm2 save
+
       # ---------------- Deploy Frontend to NGINX ----------------
       - name: Deploy Frontend to NGINX
         shell: powershell
-        continue-on-error: true
         run: |
-          $nginx = "D:\nginx\nginx.exe"
-      
-          Write-Host "Checking NGINX..."
-      
-          if (Test-Path $nginx) {
-              try {
-                  & $nginx -p "D:\nginx" -s stop
-                  Write-Host "NGINX stopped"
-              } catch {
-                  Write-Host "NGINX was not running"
-              }
+          $nginxPath = "D:\nginx\nginx.exe"
+          $nginxRoot = "D:\nginx"
+          $htmlPath  = "D:\nginx\html"
+          $source    = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+
+          Write-Host "Stopping NGINX..."
+          if (Test-Path $nginxPath) {
+              & $nginxPath -p $nginxRoot -s stop
           }
-      
+
           Start-Sleep -Seconds 2
-      
-          $htmlPath = "D:\nginx\html"
-      
+
           if (Test-Path $htmlPath) {
-              try {
-                  Remove-Item "$htmlPath\*" -Recurse -Force
-              } catch {
-                  Write-Host "Files locked, skipping delete"
-              }
+              Remove-Item "$htmlPath\*" -Recurse -Force -ErrorAction SilentlyContinue
           } else {
               New-Item -ItemType Directory -Path $htmlPath -Force
           }
-      
-          $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
+
           robocopy $source $htmlPath /E /NFL /NDL
-      
+
       # ---------------- Restart NGINX ----------------
       - name: Restart NGINX
         shell: powershell
-        continue-on-error: true
         run: |
-          try {
-              Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
-              Write-Host "NGINX started"
-          } catch {
-              Write-Host "Failed to start NGINX"
-          }
+          $nginxPath = "D:\nginx\nginx.exe"
+          $nginxRoot = "D:\nginx"
 
+          Write-Host "Starting NGINX..."
+          Start-Process $nginxPath -ArgumentList "-p $nginxRoot -c conf\nginx.conf" -NoNewWindow
