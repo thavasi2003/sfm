@@ -9,11 +9,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # ---------------- Checkout Code ----------------
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # ---------------- Node Setup ----------------
       - name: Install Node
         uses: actions/setup-node@v3
         with:
@@ -43,47 +41,47 @@ jobs:
         run: npm install -g pm2
         shell: powershell
 
-      - name: Start Backend With PM2
+      - name: Start Backend With PM2 (Stable)
         run: |
           cd sfm_api
 
-          # PM2 HOME (must match same location everywhere)
+          # PM2 HOME
           $env:PM2_HOME="D:\etc\.pm2"
 
-          # Stop & delete previous instance safely
-          pm2 stop sfm-api -s 2>$null
-          pm2 delete sfm-api -s 2>$null
+          # PM2 path (NO pm2.ps1)
+          $pm2 = "C:\Users\Administrator\AppData\Roaming\npm\node_modules\pm2\lib\CLI.js"
 
-          # Start backend
-          pm2 start server.js --name sfm-api
-          pm2 save
+          # Stop previous
+          node $pm2 stop sfm-api --silent 2>$null
+          node $pm2 delete sfm-api --silent 2>$null
+
+          # Start backend using NODE
+          node $pm2 start server.js --name sfm-api
+
+          # Save list
+          node $pm2 save
         shell: powershell
 
-      # ---------------- NGINX Deployment ----------------
+      # ---------------- NGINX ----------------
       - name: Deploy Frontend to NGINX
         run: |
-          # SAFELY STOP NGINX (no admin required)
           $nginxExe = "D:\nginx\nginx.exe"
-          if (Test-Path $nginxExe) {
-              & $nginxExe -p "D:\nginx" -s stop
-          }
+          if (Test-Path $nginxExe) { & $nginxExe -p "D:\nginx" -s stop }
+
           Start-Sleep -Seconds 3
 
-          # Remove old html folder
           $htmlPath = "D:\nginx\html"
           if (Test-Path $htmlPath) {
               try { Remove-Item -Recurse -Force -ErrorAction Stop $htmlPath }
-              catch { Write-Host "Folder still in use. Skipping removal..." }
+              catch { Write-Host "Folder still busy, skipping..." }
           }
 
-          # Recreate folder
           if (!(Test-Path $htmlPath)) {
               New-Item -ItemType Directory -Path $htmlPath -Force
           }
 
-          # Copy frontend build
           $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
-          robocopy $source $htmlPath /E /NFL /NDL /NJH /NJS /nc /ns /np
+          robocopy $source $htmlPath /E
         shell: powershell
 
       - name: Restart NGINX
