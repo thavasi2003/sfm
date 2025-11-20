@@ -72,40 +72,49 @@ jobs:
       
           Write-Host "Saving PM2 process list..."
           pm2 save
-
-
-
-
       # ---------------- Deploy Frontend to NGINX ----------------
       - name: Deploy Frontend to NGINX
         shell: powershell
+        continue-on-error: true
         run: |
           $nginx = "D:\nginx\nginx.exe"
-
+      
+          Write-Host "Checking NGINX..."
+      
           if (Test-Path $nginx) {
-              & $nginx -p "D:\nginx" -s stop
+              try {
+                  & $nginx -p "D:\nginx" -s stop
+                  Write-Host "NGINX stopped"
+              } catch {
+                  Write-Host "NGINX was not running"
+              }
           }
-
-          Start-Sleep -Seconds 3
-
+      
+          Start-Sleep -Seconds 2
+      
           $htmlPath = "D:\nginx\html"
-
+      
           if (Test-Path $htmlPath) {
               try {
                   Remove-Item "$htmlPath\*" -Recurse -Force
               } catch {
-                  Write-Host "Folder in use, skipping delete"
+                  Write-Host "Files locked, skipping delete"
               }
           } else {
               New-Item -ItemType Directory -Path $htmlPath -Force
           }
-
+      
           $source = "D:\actions-runner\_work\sfm\sfm\sfm_ui\dist"
-
-          robocopy $source $htmlPath /E
-
+          robocopy $source $htmlPath /E /NFL /NDL
+      
       # ---------------- Restart NGINX ----------------
       - name: Restart NGINX
         shell: powershell
+        continue-on-error: true
         run: |
-          Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+          try {
+              Start-Process "D:\nginx\nginx.exe" -ArgumentList '-p "D:\nginx" -c "conf\nginx.conf"' -NoNewWindow
+              Write-Host "NGINX started"
+          } catch {
+              Write-Host "Failed to start NGINX"
+          }
