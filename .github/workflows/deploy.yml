@@ -48,14 +48,20 @@ jobs:
           cd sfm_api
           $env:PM2_HOME="D:\etc\.pm2"
       
+          # Find pm2
           $pm2 = (where pm2)
           Write-Host "Using PM2: $pm2"
       
-          pm2 stop sfm-api 2>$null
-          pm2 delete sfm-api 2>$null
+          # Stop & delete old process safely
+          pm2 stop sfm-api 2>$null || $true
+          pm2 delete sfm-api 2>$null || $true
       
+          # Start app
           pm2 start server.js --name sfm-api
+      
+          # Save process list
           pm2 save
+
 
 
       # ---------------- Deploy Frontend to NGINX ----------------
